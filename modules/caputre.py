@@ -1,4 +1,10 @@
 import pyshark
+import json
+import requests
+
+def get_geo(ip):
+    r = requests.get("https://ipinfo.io/" + ip)
+    return r.text
 
 class sharkCapture:
     def __init__(self, active_interface) -> None:
@@ -6,7 +12,7 @@ class sharkCapture:
         self.capture = pyshark.LiveCapture(interface=active_interface)
 
     def get_packet_details(self, packet):
-        print("incoming", packet)
+        # print("incoming", packet)
         try: 
             packet_data = {}
             packet_data['protocol'] = packet.transport_layer
@@ -36,14 +42,23 @@ class sharkCapture:
     def filter_local_traffic(self, packet, protocolType):
         packet_details = self.filter_all_traffic_file(packet, protocolType)
         if packet_details != None:
-            if self.ip_class(packet_details['source_address']) or self.ip_class(packet_details['destination_address']):
+            if self.ip_class(packet_details['source_address']) ^ self.ip_class(packet_details['destination_address']):
                 return packet_details
-            print("address" + self.ip_class(packet_details['source_address']) + " sec: " + self.ip_class(packet_details['destination_address']))
+            # print("address" + self.ip_class(packet_details['source_address']) + " sec: " + self.ip_class(packet_details['destination_address']))
         return None
 
-    def live_capture(self):
+    def live_capture(self, current_ip):
+        captured = []
         for raw_packet in self.capture.sniff_continuously():
             udp_traffic = self.filter_local_traffic(raw_packet, 'udp')
             if udp_traffic != None:
                 # print(udp_traffic)
+                ip = ""
+                if (udp_traffic["source_address"] == current_ip):
+                    ip = udp_traffic["destination_address"]
+                else:
+                    ip = udp_traffic["source_address"]
+                if not ip in captured:
+                    print("geo", get_geo(ip))
+                    captured += [ip]
                 pass
