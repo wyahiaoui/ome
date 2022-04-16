@@ -1,5 +1,6 @@
 import pyshark
 import requests
+import modules.info as info
 
 def get_geo(ip):
     r = requests.get("https://geolocation-db.com/json/" + ip)
@@ -58,6 +59,7 @@ class sharkCapture:
                 else:
                     ip = udp_traffic["source_address"]
                 if not ip in captured:
-                    print("geo", get_geo(ip))
+                    info.ACTUAL_INFO = get_geo(ip)
+                    print("geo", info.ACTUAL_INFO)
                     captured += [ip]
                 
