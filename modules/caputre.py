@@ -1,9 +1,8 @@
 import pyshark
-import json
 import requests
 
 def get_geo(ip):
-    r = requests.get("https://ipinfo.io/" + ip)
+    r = requests.get("https://geolocation-db.com/json/" + ip)
     return r.text
 
 class sharkCapture:
@@ -13,8 +12,8 @@ class sharkCapture:
 
     def get_packet_details(self, packet):
         # print("incoming", packet)
+        packet_data = {}
         try: 
-            packet_data = {}
             packet_data['protocol'] = packet.transport_layer
             packet_data['source_address'] = packet.ip.src
             packet_data['source_port'] = packet[packet.transport_layer].srcport
@@ -23,7 +22,7 @@ class sharkCapture:
             packet_data['packet_time'] = packet.sniff_time
             return packet_data
         except:
-            print("packet is dammaged")
+            print("packet is dammaged", packet_data)
             pass
 
 
@@ -61,4 +60,4 @@ class sharkCapture:
                 if not ip in captured:
                     print("geo", get_geo(ip))
                     captured += [ip]
-                pass
+                
