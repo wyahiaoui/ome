@@ -1,0 +1,32 @@
+.third {
+    position: relative;
+    z-index: 100;
+    width: 100%;
+    background-color: #F7F7F7;
+}
+
+.basic-container {
+    width: 70%;
+    margin: 0 auto;
+    text-align: justify;
+}
+
+.contact {
+    position: relative;
+    width: 49%;
+    height: 0;
+    display: inline-block;
+    padding-bottom: 60%;
+}
+
+.contact p.lead {
+    text-align: left;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%
+}
